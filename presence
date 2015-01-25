@@ -30,8 +30,10 @@ def help_output
   puts('--file          The configuration file to be parsed.')
   puts('--host          The Junos host we want to parse the configuration of.')
   puts('--username      The username to use for Netconf authentication.')
-  puts("Example: #{$0} --file configuration.xml")
-  puts("Example: #{$0} --host abc.example.com --username johnasmith")
+  puts('--output        The name of the file where the output should be saved. This is relative')
+  puts('                to your current location.')
+  puts("Example: #{$0} --file configuration.xml --output unused-objects.txt")
+  puts("Example: #{$0} --host abc.example.com --username johnasmith --output unused-objects.txt")
   exit!
 end
 
@@ -47,17 +49,19 @@ end
 We require the file name of the Junos XML configuration or the hostname and username of the device
 and user, respectively. The file name path can be relative or absolute.
 =end
-if ARGV.include?('--file') == true and ARGV.length == 2 then
+if ARGV.include?('--file') == true and ARGV.include?('--output') and ARGV.length == 4 then
   file = ARGV[(ARGV.index('--file')+1)]
-elsif ARGV.include?('--file') and ARGV.length != 2 then
-  incorrect_options(ARGV.length, 2)
-elsif ARGV.include?('--host') == true and ARGV.include?('--username') == true and ARGV.length == 4 then
+  output = ARGV[(ARGV.index('--output')+1)]
+elsif ARGV.include?('--file') == true and ARGV.include?('--output') == true and ARGV.length != 4 then
+  incorrect_options(ARGV.length, 4)
+elsif ARGV.include?('--host') == true and ARGV.include?('--username') == true and ARGV.length == 6 then
   host = ARGV[(ARGV.index('--host')+1)]
   username = ARGV[(ARGV.index('--username')+1)]
+  output = ARGV[(ARGV.index('--output')+1)] 
   print("#{username}@#{host} password: "); password = STDIN.noecho(&:gets).chomp
   puts("")
-elsif ARGV.include?('--host') == true or ARGV.include?('--username') == true and ARGV.length != 4 then
-  incorrect_options(ARGV.length, 4)
+elsif ARGV.include?('--host') == true or ARGV.include?('--username') == true and ARGV.include?('--output') and ARGV.length != 6 then
+  incorrect_options(ARGV.length, 6)
 else
   help_output
 end
