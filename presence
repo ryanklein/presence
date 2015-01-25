@@ -1,0 +1,63 @@
+#!/usr/bin/env ruby
+#
+# Name: presence
+
+=begin
+Created by Ryan Klein (@ryanklein)
+
+This application lists unused Juniper address[-set] and application[-set] entries in Junos set
+format from a (XML) configuration file or by retrieving the current configuration via Netconf.
+=end
+
+=begin
+Include the require libraries or produce an error if they do not exist in the expected path.
+=end
+begin
+  require 'net/netconf'
+  require 'io/console'
+rescue LoadError => load_error
+  puts("Cannot find '#{load_error.path}' library, please install it via Ruby gems and try again.")
+  exit!
+end
+
+=begin
+The options accepted as well as some examples. 
+=end
+def help_output
+  puts('This requires the configuration file or username and host to be passed as options.')
+  puts('')
+  puts('Options:')
+  puts('--file          The configuration file to be parsed.')
+  puts('--host          The Junos host we want to parse the configuration of.')
+  puts('--username      The username to use for Netconf authentication.')
+  puts("Example: #{$0} --file configuration.xml")
+  puts("Example: #{$0} --host abc.example.com --username johnasmith")
+  exit!
+end
+
+=begin
+Display an error if the correct number of options are passed. opts_passed is the number of options
+passed, opts_expected is the number of options expected.
+=end
+def incorrect_options(opts_passed, opts_expected)
+  puts("Incorrect number of options passed, #{opts_passed} of #{opts_expected} expected.")
+end
+
+=begin
+We require the file name of the Junos XML configuration or the hostname and username of the device
+and user, respectively. The file name path can be relative or absolute.
+=end
+if ARGV.include?('--file') == true and ARGV.length == 2 then
+  file = ARGV[(ARGV.index('--file')+1)]
+elsif ARGV.include?('--file') and ARGV.length != 2 then
+  incorrect_options(ARGV.length, 2)
+elsif ARGV.include?('--host') == true and ARGV.include?('--username') == true and ARGV.length == 4 then
+  host = ARGV[(ARGV.index('--host')+1)]
+  username = ARGV[(ARGV.index('--username')+1)]
+  print("#{username}@#{host} password: "); password = STDIN.noecho(&:gets).chomp
+  puts("")
+elsif ARGV.include?('--host') == true or ARGV.include?('--username') == true and ARGV.length != 4 then
+  incorrect_options(ARGV.length, 4)
+else
+  help_output
+end
