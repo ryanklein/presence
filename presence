@@ -21,7 +21,7 @@ rescue LoadError => load_error
 end
 
 =begin
-The options accepted as well as some examples. 
+The options accepted as well as some examples.
 =end
 def help_output
   puts('This requires the configuration file or username and host to be passed as options.')
@@ -57,7 +57,7 @@ elsif ARGV.include?('--file') == true and ARGV.include?('--output') == true and 
 elsif ARGV.include?('--host') == true and ARGV.include?('--username') == true and ARGV.length == 6 then
   host = ARGV[(ARGV.index('--host')+1)]
   username = ARGV[(ARGV.index('--username')+1)]
-  output = ARGV[(ARGV.index('--output')+1)] 
+  output = ARGV[(ARGV.index('--output')+1)]
   print("#{username}@#{host} password: "); password = STDIN.noecho(&:gets).chomp
   puts("")
 elsif ARGV.include?('--host') == true or ARGV.include?('--username') == true and ARGV.include?('--output') and ARGV.length != 6 then
@@ -65,3 +65,15 @@ elsif ARGV.include?('--host') == true or ARGV.include?('--username') == true and
 else
   help_output
 end
+
+=begin
+Assign the xpath searches for the elements we will iterate over.
+=end
+addresses = config.xpath('/rpc-reply/configuration/security/address-book/address')
+address_sets = config.xpath('/rpc-reply/configuration/security/address-book/address-set')
+address_set_addresses = config.xpath('/rpc-reply/configuration/security/address-book/address-set/address')
+source_addresses = config.xpath('/rpc-reply/configuration/security/policies//source-address')
+destination_addresses = config.xpath('/rpc-reply/configuration/security/policies//destination-address')
+applications = config.xpath('/rpc-reply/configuration/applications/application')
+application_sets = config.xpath('/rpc-reply/configuration/applications/application-sets')
+policy_applications = config.xpath('/rpc-reply/configuration/security/policies//application')
