@@ -67,6 +67,19 @@ else
 end
 
 =begin
+Evaluate if the file (output) currently exists. If it does evaluate the permissions. If the file does exist prompt
+to amend, overwrite, or create a new file under a different name.
+=end
+if File.exist?(output) == true and File.writable?(output) == true then
+  puts("The file (#{output}) exists, which action should be taken? [amend] [overwrite] [new]")
+  output_response = gets.chomp
+elsif File.exist?(output) == true and File.writable?(output) == false then
+  puts("The file (#{output}) exists but is not writable.")
+else
+File.open(output, 'w+')
+end
+
+=begin
 Assign the xpath searches for the elements we will iterate over.
 =end
 addresses = config.xpath('/rpc-reply/configuration/security/address-book/address')
@@ -77,3 +90,6 @@ destination_addresses = config.xpath('/rpc-reply/configuration/security/policies
 applications = config.xpath('/rpc-reply/configuration/applications/application')
 application_sets = config.xpath('/rpc-reply/configuration/applications/application-sets')
 policy_applications = config.xpath('/rpc-reply/configuration/security/policies//application')
+group_policy_applications = config.xpath('/rpc-reply/configuration/groups/security/policies//application/')
+group_source_addresses = config.xpath('/rpc-reply/configuration/security/policies//source-address')
+group_destination_addresses = config.xpath('/rpc-reply/configuration/security/policies//destination-address')
